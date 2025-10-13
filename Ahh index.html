@@ -1,0 +1,693 @@
+<!-- @format -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Book a Ride — Demi</title>
+
+    <!-- Leaflet CSS -->
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    />
+    <!-- Leaflet Routing Machine CSS -->
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css"
+    />
+
+    <style>
+      :root {
+        --bg: #f4f7fb;
+        --card: #ffffff;
+        --accent: #2563eb;
+        --muted: #6b7280;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+          Roboto, "Helvetica Neue", Arial;
+        background: var(--bg);
+        color: #0f172a;
+      }
+      .wrap {
+        max-width: 1100px;
+        margin: 28px auto;
+        padding: 18px;
+      }
+      .top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 18px;
+      }
+      h1 {
+        font-size: 20px;
+        margin: 0;
+      }
+      .subtitle {
+        color: var(--muted);
+        font-size: 13px;
+      }
+      .layout {
+        display: grid;
+        grid-template-columns: 380px 1fr;
+        gap: 18px;
+      }
+      .card {
+        background: var(--card);
+        border-radius: 14px;
+        padding: 16px;
+        box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
+      }
+      label {
+        display: block;
+        font-weight: 600;
+        font-size: 13px;
+        margin: 8px 0 6px;
+      }
+      input[type="text"],
+      input[type="number"],
+      .search {
+        width: 100%;
+        padding: 10px 12px;
+        border-radius: 10px;
+        border: 1px solid #e6e9ef;
+        font-size: 14px;
+      }
+      .row {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+      button {
+        cursor: pointer;
+        border: 0;
+        padding: 10px 12px;
+        border-radius: 10px;
+        font-weight: 600;
+      }
+      .btn-primary {
+        background: var(--accent);
+        color: white;
+        box-shadow: 0 6px 12px rgba(37, 99, 235, 0.12);
+      }
+      .btn-ghost {
+        background: #f1f5f9;
+        border: 1px solid #e6e9ef;
+        color: #111;
+      }
+      .small {
+        padding: 8px 10px;
+        font-size: 13px;
+        border-radius: 8px;
+      }
+      #map {
+        height: 600px;
+        border-radius: 12px;
+        overflow: hidden;
+      }
+      .summary {
+        margin-top: 12px;
+        color: var(--muted);
+        font-size: 13px;
+      }
+      .drivers-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 12px;
+      }
+      .driver {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px;
+        border-radius: 10px;
+        background: #fcfdff;
+        border: 1px solid #eef2ff;
+      }
+      .driver-left {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .avatar {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, #eef2ff, #e0f2fe);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        color: #0f172a;
+      }
+      .meta {
+        font-size: 13px;
+      }
+      .fare {
+        text-align: right;
+      }
+      .muted {
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .controls {
+        display: flex;
+        gap: 8px;
+        margin-top: 12px;
+      }
+      .flex-between {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .search-results {
+        position: relative;
+      }
+      .suggest {
+        background: #f8fafc;
+        border: 1px solid #e6edf9;
+        padding: 10px;
+        border-radius: 8px;
+        font-size: 13px;
+        margin-top: 10px;
+      }
+      @media (max-width: 980px) {
+        .layout {
+          grid-template-columns: 1fr;
+        }
+        #map {
+          height: 420px;
+        }
+        .card {
+          padding: 12px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <div class="top">
+        <div>
+          <h1>Book a Ride — Demi</h1>
+          <div class="subtitle">
+            Live map, routing, fare suggestions and driver matching
+          </div>
+        </div>
+        <div class="muted">No signup · Demo only</div>
+      </div>
+
+      <div class="layout">
+        <!-- Left card (form & drivers) -->
+        <div class="card" aria-label="controls">
+          <label for="pickup">Pickup</label>
+          <input
+            id="pickup"
+            class="search"
+            placeholder="Search pickup address or click map"
+            autocomplete="off"
+          />
+          <div id="pickup-results" class="search-results"></div>
+
+          <label for="dropoff">Dropoff</label>
+          <input
+            id="dropoff"
+            class="search"
+            placeholder="Search dropoff address or click map"
+            autocomplete="off"
+          />
+          <div id="dropoff-results" class="search-results"></div>
+
+          <label
+            >Your offer (₦)
+            <span class="muted" style="font-weight: 500">
+              — optional</span
+            ></label
+          >
+          <div class="row">
+            <input
+              id="offer"
+              type="number"
+              placeholder="Leave blank to use estimated fare"
+            />
+            <button id="suggestBtn" class="small btn-ghost">
+              Suggest price
+            </button>
+          </div>
+
+          <div class="controls">
+            <button id="routeBtn" class="btn-primary">Preview route</button>
+            <button id="clearBtn" class="btn-ghost">Reset</button>
+          </div>
+
+          <div class="summary" id="routeSummary">
+            No route yet — enter pickup & dropoff or click map pins.
+          </div>
+
+          <div
+            style="
+              margin-top: 12px;
+              display: flex;
+              gap: 8px;
+              align-items: center;
+            "
+          >
+            <button id="copyBtn" class="small btn-ghost">Copy details</button>
+            <div class="muted" style="font-size: 12px">
+              Tip: drag pins on map to adjust pickup/dropoff
+            </div>
+          </div>
+
+          <div style="margin-top: 18px">
+            <div
+              style="
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+              "
+            >
+              <div style="font-weight: 700">Driver offers</div>
+              <div class="muted" style="font-size: 12px">
+                Auto-matched from nearby drivers
+              </div>
+            </div>
+            <div id="drivers" class="drivers-list">
+              <!-- drivers fill here -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Right card (map & route) -->
+        <div class="card">
+          <div class="flex-between">
+            <div style="font-weight: 700">Map preview</div>
+            <div class="muted" id="mapMeta">Map powered by OpenStreetMap</div>
+          </div>
+          <div id="map"></div>
+          <div class="suggest" id="mapNotice" style="display: none"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- Leaflet Routing Machine + dependencies -->
+    <script src="https://unpkg.com/lrm-graphhopper@1.3.0/dist/lrm-graphhopper.min.js"></script>
+    <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
+
+    <script>
+      // --- Mock drivers dataset (in a real app, fetch from server) ---
+      const mockDrivers = [
+        {
+          id: 1,
+          name: "Ruchi",
+          car: "Toyota Prius",
+          rating: 4.9,
+          base: 200,
+          perKm: 60,
+          color: "#fde68a",
+          seat: 4,
+        },
+        {
+          id: 2,
+          name: "Seyi",
+          car: "Honda Civic",
+          rating: 4.7,
+          base: 180,
+          perKm: 70,
+          color: "#c7f9cc",
+          seat: 4,
+        },
+        {
+          id: 3,
+          name: "Tunde",
+          car: "Kia Picanto",
+          rating: 4.6,
+          base: 150,
+          perKm: 80,
+          color: "#cfe8ff",
+          seat: 4,
+        },
+        {
+          id: 4,
+          name: "Ada",
+          car: "Lagos Taxi",
+          rating: 4.5,
+          base: 140,
+          perKm: 65,
+          color: "#ffdbe6",
+          seat: 4,
+        },
+      ];
+
+      // Utility: DOM refs
+      const pickupInput = document.getElementById("pickup");
+      const dropInput = document.getElementById("dropoff");
+      const pickupResults = document.getElementById("pickup-results");
+      const dropResults = document.getElementById("dropoff-results");
+      const offerInput = document.getElementById("offer");
+      const driversDiv = document.getElementById("drivers");
+      const routeBtn = document.getElementById("routeBtn");
+      const clearBtn = document.getElementById("clearBtn");
+      const suggestBtn = document.getElementById("suggestBtn");
+      const copyBtn = document.getElementById("copyBtn");
+      const routeSummary = document.getElementById("routeSummary");
+      const mapNotice = document.getElementById("mapNotice");
+
+      // Map init (centered on Lagos by default)
+      const map = L.map("map").setView([6.5244, 3.3792], 13);
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: "© OpenStreetMap contributors",
+      }).addTo(map);
+
+      // Draggable markers for pickup and dropoff
+      let pickupMarker = L.marker([6.5244, 3.3792], { draggable: true })
+        .addTo(map)
+        .bindPopup("Pickup (drag me)");
+      let dropMarker = L.marker([6.5344, 3.3892], { draggable: true })
+        .addTo(map)
+        .bindPopup("Dropoff (drag me)");
+
+      // Routing control (Leaflet Routing Machine) using OSRM public server
+      let routingControl = null;
+      function showRoute(fromLatLng, toLatLng) {
+        if (routingControl) {
+          map.removeControl(routingControl);
+        }
+        routingControl = L.Routing.control({
+          waypoints: [L.latLng(fromLatLng), L.latLng(toLatLng)],
+          router: L.Routing.osrmv1({
+            serviceUrl: "https://router.project-osrm.org/route/v1",
+          }),
+          lineOptions: {
+            styles: [{ color: "#2563eb", opacity: 0.9, weight: 6 }],
+          },
+          fitSelectedRoute: true,
+          showAlternatives: false,
+          addWaypoints: false,
+          routeWhileDragging: false,
+          createMarker: function () {
+            return null;
+          }, // we already have markers
+        }).addTo(map);
+
+        routingControl.on("routesfound", function (e) {
+          const r = e.routes[0];
+          const km = (r.summary.totalDistance / 1000).toFixed(2);
+          const mins = Math.round(r.summary.totalTime / 60);
+          routeSummary.innerHTML = `<strong>${km} km</strong> · ~${mins} min · Estimated: ₦${estimateFare(
+            Number(km)
+          )}`;
+          generateDriverOffers(Number(km));
+          mapNotice.style.display = "none";
+        });
+        routingControl.on("routingerror", function () {
+          mapNotice.style.display = "";
+          mapNotice.innerText =
+            "Could not fetch route from OSRM. Try moving pins or try again.";
+        });
+      }
+
+      // Estimate fare simple formula
+      function estimateFare(km) {
+        const base = 150;
+        const perKm = 60;
+        return Math.max(200, Math.round(base + perKm * km));
+      }
+
+      // Generate driver "offers" using mock drivers and distance
+      function generateDriverOffers(km) {
+        driversDiv.innerHTML = "";
+        // score by rating and closeness to estimated fare and ETA
+        const estFare = estimateFare(km);
+        const offers = mockDrivers
+          .map((d) => {
+            const fare = Math.round(d.base + d.perKm * km);
+            const eta = Math.max(3, Math.round(km / 2) + d.rating);
+            const score =
+              d.rating * 10 - Math.abs(fare - estFare) / 30 - eta * 0.4;
+            return { driver: d, fare, eta, score };
+          })
+          .sort((a, b) => b.score - a.score);
+
+        offers.forEach((o) => {
+          const el = document.createElement("div");
+          el.className = "driver";
+          el.innerHTML = `
+          <div class="driver-left">
+            <div class="avatar" style="background:${o.driver.color}">${o.driver.name[0]}</div>
+            <div>
+              <div style="font-weight:700">${o.driver.name} <span class="muted" style="font-weight:600">· ${o.driver.car}</span></div>
+              <div class="muted meta">Rating ${o.driver.rating} · ETA ${o.eta} min</div>
+            </div>
+          </div>
+          <div class="fare">
+            <div class="muted">Est. fare</div>
+            <div style="font-weight:800; font-size:16px">₦${o.fare}</div>
+            <button onclick='confirmRide(${o.driver.id}, ${o.fare}, ${o.eta})' class="small btn-primary" style="margin-top:8px">Select</button>
+          </div>
+        `;
+          driversDiv.appendChild(el);
+        });
+      }
+
+      // Confirm ride (demo)
+      function confirmRide(driverId, fare, eta) {
+        const driver = mockDrivers.find((d) => d.id === driverId);
+        const pickupText = pickupInput.value || "custom location";
+        const dropText = dropInput.value || "custom location";
+        alert(
+          `Ride confirmed!\nDriver: ${driver.name}\nFrom: ${pickupText}\nTo: ${dropText}\nFare: ₦${fare}\nETA: ${eta} min`
+        );
+      }
+
+      // Geocode (Nominatim) simple search
+      async function geocode(query) {
+        const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
+          query
+        )}&addressdetails=1&limit=6`;
+        try {
+          const res = await fetch(url, {
+            headers: { Accept: "application/json" },
+          });
+          const data = await res.json();
+          return data;
+        } catch (e) {
+          return [];
+        }
+      }
+
+      // Populate search suggestions for inputs
+      function attachLiveSearch(inputEl, resultsEl, onChoose) {
+        let lastQ = "";
+        let timer = null;
+        inputEl.addEventListener("input", (e) => {
+          const q = e.target.value.trim();
+          if (!q) {
+            resultsEl.innerHTML = "";
+            return;
+          }
+          lastQ = q;
+          clearTimeout(timer);
+          timer = setTimeout(async () => {
+            const hits = await geocode(q);
+            if (lastQ !== q) return;
+            resultsEl.innerHTML = "";
+            hits.forEach((h) => {
+              const btn = document.createElement("div");
+              btn.style.padding = "8px";
+              btn.style.borderBottom = "1px solid #f1f5f9";
+              btn.style.cursor = "pointer";
+              btn.innerHTML = `<div style="font-weight:700">${
+                h.display_name.split(",")[0]
+              }</div><div class="muted" style="font-size:12px">${
+                h.display_name
+              }</div>`;
+              btn.onclick = () => {
+                resultsEl.innerHTML = "";
+                inputEl.value = h.display_name;
+                onChoose([Number(h.lat), Number(h.lon)], h.display_name);
+              };
+              resultsEl.appendChild(btn);
+            });
+          }, 350);
+        });
+        // clear suggestions when clicking elsewhere
+        document.addEventListener("click", (ev) => {
+          if (!resultsEl.contains(ev.target) && ev.target !== inputEl)
+            resultsEl.innerHTML = "";
+        });
+      }
+
+      attachLiveSearch(pickupInput, pickupResults, (latlng, text) => {
+        pickupMarker.setLatLng(latlng).bindPopup(`Pickup: ${text}`).openPopup();
+        map.setView(latlng, 14);
+      });
+      attachLiveSearch(dropInput, dropResults, (latlng, text) => {
+        dropMarker.setLatLng(latlng).bindPopup(`Dropoff: ${text}`).openPopup();
+        map.setView(latlng, 14);
+      });
+
+      // When markers are dragged, update input text via reverse geocode
+      async function reverseGeocode(lat, lng) {
+        const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`;
+        try {
+          const res = await fetch(url);
+          const data = await res.json();
+          return data.display_name || `${lat.toFixed(5)},${lng.toFixed(5)}`;
+        } catch (e) {
+          return `${lat.toFixed(5)},${lng.toFixed(5)}`;
+        }
+      }
+      pickupMarker.on("dragend", async () => {
+        const ll = pickupMarker.getLatLng();
+        const name = await reverseGeocode(ll.lat, ll.lng);
+        pickupInput.value = name;
+      });
+      dropMarker.on("dragend", async () => {
+        const ll = dropMarker.getLatLng();
+        const name = await reverseGeocode(ll.lat, ll.lng);
+        dropInput.value = name;
+      });
+
+      // Clicking map sets nearest empty slot (pickup or dropoff)
+      map.on("click", async (e) => {
+        const latlng = e.latlng;
+        // choose which to set: if pickup empty or both set — set dropoff, otherwise set pickup
+        if (!pickupInput.value) {
+          pickupMarker.setLatLng(latlng);
+          const name = await reverseGeocode(latlng.lat, latlng.lng);
+          pickupInput.value = name;
+        } else if (!dropInput.value) {
+          dropMarker.setLatLng(latlng);
+          const name = await reverseGeocode(latlng.lat, latlng.lng);
+          dropInput.value = name;
+        } else {
+          // both set — set dropoff by default
+          dropMarker.setLatLng(latlng);
+          const name = await reverseGeocode(latlng.lat, latlng.lng);
+          dropInput.value = name;
+        }
+      });
+
+      // Buttons
+      routeBtn.addEventListener("click", () => {
+        const p = pickupMarker.getLatLng();
+        const d = dropMarker.getLatLng();
+        // simple sanity
+        if (!p || !d) {
+          alert("Set pickup and dropoff first");
+          return;
+        }
+        showRoute([p.lat, p.lng], [d.lat, d.lng]);
+      });
+
+      clearBtn.addEventListener("click", () => {
+        pickupInput.value = "";
+        dropInput.value = "";
+        offerInput.value = "";
+        routeSummary.innerText =
+          "No route yet — enter pickup & dropoff or click map pins.";
+        driversDiv.innerHTML = "";
+        if (routingControl) {
+          map.removeControl(routingControl);
+          routingControl = null;
+        }
+      });
+
+      suggestBtn.addEventListener("click", () => {
+        // If route exists read km from routeSummary text, else estimate using straight-line
+        const text = routeSummary.innerText;
+        let km = null;
+        const m = text.match(/([\d\.]+) km/);
+        if (m) km = Number(m[1]);
+        if (!km) {
+          const p = pickupMarker.getLatLng();
+          const d = dropMarker.getLatLng();
+          km = haversineKm(p.lat, p.lng, d.lat, d.lng);
+        }
+        offerInput.value = estimateFare(km);
+        routeSummary.innerHTML +=
+          ' · <span class="muted">Suggested price applied</span>';
+      });
+
+      copyBtn.addEventListener("click", () => {
+        const txt = `Pickup: ${pickupInput.value || "—"}\nDropoff: ${
+          dropInput.value || "—"
+        }\nOffer: ${offerInput.value || "estimate"}`;
+        navigator.clipboard?.writeText(txt);
+        copyBtn.innerText = "Copied!";
+        setTimeout(() => (copyBtn.innerText = "Copy details"), 1200);
+      });
+
+      // small Haversine for straight-line fallback
+      function haversineKm(lat1, lon1, lat2, lon2) {
+        const R = 6371;
+        const dLat = ((lat2 - lat1) * Math.PI) / 180;
+        const dLon = ((lon2 - lon1) * Math.PI) / 180;
+        const a =
+          Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+          Math.cos((lat1 * Math.PI) / 180) *
+            Math.cos((lat2 * Math.PI) / 180) *
+            Math.sin(dLon / 2) *
+            Math.sin(dLon / 2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return Math.max(0.5, R * c);
+      }
+
+      // When page loads, try to set user location (optional)
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            const lat = pos.coords.latitude,
+              lon = pos.coords.longitude;
+            map.setView([lat, lon], 13);
+            pickupMarker.setLatLng([lat, lon]);
+            reverseGeocode(lat, lon).then((name) => (pickupInput.value = name));
+          },
+          () => {
+            /* ignore failure */
+          }
+        );
+      }
+
+      // Accessibility: allow Enter to route
+      pickupInput.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") routeBtn.click();
+      });
+      dropInput.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") routeBtn.click();
+      });
+
+      // If both inputs are filled auto preview (small convenience)
+      let autoPreviewTimer = null;
+      [pickupInput, dropInput].forEach((el) => {
+        el.addEventListener("input", () => {
+          clearTimeout(autoPreviewTimer);
+          autoPreviewTimer = setTimeout(() => {
+            if (pickupInput.value && dropInput.value) routeBtn.click();
+          }, 900);
+        });
+      });
+
+      // Prevent too many API calls during dev (Nominatim usage)
+      function debounce(fn, wait = 300) {
+        let t;
+        return (...args) => {
+          clearTimeout(t);
+          t = setTimeout(() => fn.apply(this, args), wait);
+        };
+      }
+
+      // End of script
+    </script>
+  </body>
+</html>

@@ -1,0 +1,59 @@
+<!-- @format -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>project</title>
+  </head>
+  <body>
+    My project is loading...
+    <script>
+      // Simulate loading process
+      setTimeout(() => {
+        document.body.innerHTML = "<h1>Project Loaded Successfully!</h1>";
+      }, 3000); // Change the time as needed
+    </script>
+    <style>
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        font-family: Arial, sans-serif;
+        background-color: #f0f0f0;
+      }
+      h1 {
+        color: #333;
+      }
+      p {
+        color: #666;
+      }
+      .loading {
+        font-size: 24px;
+        color: #007bff;
+      }
+      .loading::after {
+        content: "...";
+        animation: dots 1s steps(3, end) infinite;
+      }
+      @keyframes dots {
+        0%,
+        20% {
+          content: "";
+        }
+        40% {
+          content: ".";
+        }
+        60% {
+          content: "..";
+        }
+        80%,
+        100% {
+          content: "...";
+        }
+      }
+    </style>
+  </body>
+</html>

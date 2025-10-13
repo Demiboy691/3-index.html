@@ -1,0 +1,148 @@
+<!-- @format -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>QuickRide - Book a Ride</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  </head>
+  <body>
+    <!-- Header -->
+    <header>
+      <h1>QuickRide</h1>
+      <p>Book your ride in seconds 🚗</p>
+      <button id="loginBtn" class="login-btn">Login</button>
+    </header>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal hidden">
+      <div class="modal-content">
+        <span id="closeModal" class="close">&times;</span>
+        <h2>Login to QuickRide</h2>
+        <form id="loginForm">
+          <label for="email">Email</label>
+          <input
+            type="email"
+            id="email"
+            placeholder="Enter your email"
+            required
+          />
+          <label for="password">Password</label>
+          <input
+            type="password"
+            id="password"
+            placeholder="Enter your password"
+            required
+          />
+          <button type="submit">Login</button>
+          <p id="loginError" class="hidden">❌ Invalid email or password</p>
+        </form>
+      </div>
+    </div>
+
+    <!-- Ride Booking --> </div>
+
+    <main>
+      <div class="container">
+        <h2>Book a Ride</h2>
+        <form id="rideForm" class="ride-form">
+          <div class="input-group">
+            <label for="pickup"
+              ><i class="fas fa-map-marker-alt"></i> Pickup Location</label
+            >
+            <input
+              type="text"
+              id="pickup"
+              name="pickup"
+              placeholder="Enter pickup location"
+              required
+            />
+          </div>
+
+          <div class="input-group">
+            <label for="dropoff"
+              ><i class="fas fa-map-marker-alt"></i> Drop-off Location</label
+            >
+            <input
+              type="text"
+              id="dropoff"
+              name="dropoff"
+              placeholder="Enter drop-off location"
+              required
+            />
+          </div>
+
+          <div class="input-group">
+            <label for="time"><i class="far fa-clock"></i> Ride Time</label>
+            <select id="time" name="time" required>
+              <option value="">--Select--</option>
+              <option value="now">Now</option>
+              <option value="later">Later</option>
+            </select>
+          </div>
+
+          <div class="input-group">
+            <label for="name"><i class="far fa-user"></i> Passenger Name</label>
+            <input type="text" id="name" name="name" required />
+          </div>
+
+          <div class="input-group">
+            <label for="phone"><i class="fas fa-phone"></i> Phone Number</label>
+            <input
+              type="tel"
+              id="phone"
+              name="phone"
+              placeholder="+2348000000000"
+              required
+            />
+          </div>
+
+          <button type="submit" class="book-btn">Book Ride</button>
+        </form>
+
+        <div id="rideInfo" class="hidden">
+          <p><strong>Distance:</strong> <span id="distance"></span> km</p>
+          <p>
+            <strong>Estimated Time:</strong> <span id="duration"></span> min
+          </p>
+          <p><strong>Estimated Price:</strong> ₦<span id="price"></span></p>
+        </div>
+
+        <p id="successMessage" class="hidden">
+          ✅ Your ride request has been sent! We’ll contact you shortly.
+        </p>
+      </div>
+      <div class="input-group">
+        <label for="offerPrice"
+          ><i class="fas fa-money-bill-wave"></i> Your Offer (₦)</label
+        >
+        <input
+          type="number"
+          id="offerPrice"
+          name="offerPrice"
+          placeholder="Enter your offer"
+          min="0"
+        />
+      </div>
+     <div class="input-group offer-group">
+  <label for="offerPrice"><i class="fas fa-money-bill-wave"></i> Your Offer</label>
+  <div class="offer-input-wrapper">
+    <span class="currency">₦</span>
+    <input type="number" id="offerPrice" name="offerPrice" placeholder="Enter your offer" min="0">
+  </div>
+</div>
+    </main>
+
+    <!-- Map Section -->
+    <section class="map-section">
+      <h2>View Your Route</h2>
+      <div id="map"></div>
+    </section>
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>

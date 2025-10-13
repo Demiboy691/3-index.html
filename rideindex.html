@@ -1,0 +1,136 @@
+<!-- @format -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>QuickRide Advanced</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <!-- Header -->
+    <header>
+      <h1>QuickRide</h1>
+      <button id="loginBtn" class="login-btn">Login</button>
+    </header>
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal hidden">
+      <div class="modal-content">
+        <span id="closeModal" class="close">&times;</span>
+        <h2>Login</h2>
+        <form id="loginForm">
+          <input type="email" id="email" placeholder="Email" required />
+          <input
+            type="password"
+            id="password"
+            placeholder="Password"
+            required
+          />
+          <button type="submit">Login</button>
+          <p id="loginError" class="hidden">Invalid email or password</p>
+        </form>
+      </div>
+    </div>
+
+    <!-- Ride Booking -->
+    <main>
+      <div class="container">
+        <h2>Book a Ride</h2>
+        <form id="rideForm" class="ride-form">
+          <div class="input-group">
+            <label><i class="fas fa-map-marker-alt"></i> Pickup Location</label>
+            <input
+              type="text"
+              id="pickup"
+              placeholder="Enter pickup location"
+              required
+            />
+          </div>
+
+          <div class="input-group">
+            <label
+              ><i class="fas fa-map-marker-alt"></i> Drop-off Location</label
+            >
+            <input
+              type="text"
+              id="dropoff"
+              placeholder="Enter drop-off location"
+              required
+            />
+          </div>
+
+          <div class="input-group">
+            <label><i class="far fa-clock"></i> Ride Time</label>
+            <select id="time" required>
+              <option value="">--Select--</option>
+              <option value="now">Now</option>
+              <option value="later">Later</option>
+            </select>
+          </div>
+
+          <div class="input-group offer-group">
+            <label><i class="fas fa-money-bill-wave"></i> Your Offer (₦)</label>
+            <div class="offer-input-wrapper">
+              <span class="currency">₦</span>
+              <input
+                type="number"
+                id="offerPrice"
+                placeholder="Enter your offer"
+                min="0"
+              />
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label><i class="far fa-user"></i> Passenger Name</label>
+            <input type="text" id="name" required />
+          </div>
+
+          <div class="input-group">
+            <label><i class="fas fa-phone"></i> Phone Number</label>
+            <input
+              type="tel"
+              id="phone"
+              placeholder="+2348000000000"
+              required
+            />
+          </div>
+
+          <button type="submit" class="book-btn">Book Ride</button>
+        </form>
+
+        <div id="rideInfo" class="hidden">
+          <p><strong>Distance:</strong> <span id="distance"></span> km</p>
+          <p><strong>Duration:</strong> <span id="duration"></span> min</p>
+          <p><strong>Estimated Price:</strong> ₦<span id="price"></span></p>
+        </div>
+
+        <div id="driverInfo" class="hidden">
+          <h3>Assigned Driver</h3>
+          <p><strong>Name:</strong> <span id="driverName"></span></p>
+          <p><strong>Car:</strong> <span id="driverCar"></span></p>
+          <p><strong>ETA:</strong> <span id="driverETA"></span> min</p>
+        </div>
+
+        <p id="successMessage" class="hidden">
+          ✅ Ride booked! Driver is on the way.
+        </p>
+      </div>
+    </main>
+
+    <!-- Map Section -->
+    <section class="map-section">
+      <h2>Your Route</h2>
+      <div id="map"></div>
+    </section>
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>
