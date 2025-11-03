@@ -1,0 +1,973 @@
+<!-- @format -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Create Account | CareConnect</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      /* CSS Variables */
+      :root {
+        --primary: #2a6ebb;
+        --primary-dark: #1a4a8a;
+        --secondary: #34c38f;
+        --light: #f8f9fa;
+        --dark: #343a40;
+        --accent: #5a67d8;
+        --light-gray: #e0e0e0;
+        --medium-gray: #9e9e9e;
+        --border-radius: 8px;
+        --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        --transition: all 0.3s ease;
+      }
+
+      /* Base Styles */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        line-height: 1.6;
+        color: #333;
+        background-color: #f5f7fa;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* Header */
+      header {
+        background-color: white;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        padding: 1rem 0;
+      }
+
+      .logo {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--primary);
+        text-align: center;
+      }
+
+      /* Auth Container */
+      .auth-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex: 1;
+        padding: 2rem 1rem;
+      }
+
+      .auth-box {
+        background: white;
+        padding: 3rem;
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow);
+        width: 100%;
+        max-width: 550px;
+        text-align: center;
+      }
+
+      .auth-box h1 {
+        font-size: 2.2rem;
+        color: var(--primary-dark);
+        margin-bottom: 0.5rem;
+      }
+
+      .auth-box > p {
+        color: #555;
+        margin-bottom: 2rem;
+      }
+
+      /* User Type Selection */
+      .user-type-selection {
+        margin-bottom: 2rem;
+      }
+
+      .user-type-selection h3 {
+        text-align: center;
+        margin-bottom: 1rem;
+        color: var(--dark);
+        font-weight: 600;
+      }
+
+      .user-type-options {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+      }
+
+      .user-type-card {
+        flex: 1;
+        border: 2px solid var(--light-gray);
+        border-radius: var(--border-radius);
+        padding: 1.5rem 1rem;
+        cursor: pointer;
+        transition: var(--transition);
+        text-align: center;
+        background: white;
+      }
+
+      .user-type-card:hover {
+        border-color: var(--primary);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow);
+      }
+
+      .user-type-card.selected {
+        border-color: var(--primary);
+        background-color: rgba(42, 110, 187, 0.05);
+      }
+
+      .user-type-card i {
+        font-size: 2rem;
+        margin-bottom: 0.75rem;
+        display: block;
+      }
+
+      .user-type-card.patient i {
+        color: var(--primary);
+      }
+
+      .user-type-card.nurse i {
+        color: var(--secondary);
+      }
+
+      .user-type-card h4 {
+        margin-bottom: 0.5rem;
+        color: var(--dark);
+      }
+
+      .user-type-card p {
+        font-size: 0.9rem;
+        color: var(--medium-gray);
+      }
+
+      /* Nurse Benefits Section */
+      .nurse-benefits {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e8f4ff 100%);
+        border-radius: var(--border-radius);
+        padding: 1.5rem;
+        margin: 1.5rem 0;
+        text-align: left;
+        border-left: 4px solid var(--secondary);
+        display: none;
+      }
+
+      .nurse-benefits.active {
+        display: block;
+        animation: fadeIn 0.5s ease;
+      }
+
+      .nurse-benefits h4 {
+        color: var(--primary-dark);
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .nurse-benefits h4 i {
+        color: var(--secondary);
+      }
+
+      .benefits-list {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+      }
+
+      .benefit-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.75rem;
+      }
+
+      .benefit-item i {
+        color: var(--secondary);
+        margin-top: 0.2rem;
+        flex-shrink: 0;
+      }
+
+      .benefit-item span {
+        font-size: 0.9rem;
+        color: #555;
+      }
+
+      /* Form Styles */
+      form {
+        text-align: left;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        color: var(--dark);
+      }
+
+      .input-group {
+        position: relative;
+        margin-bottom: 1.5rem;
+      }
+
+      .input-group i {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--medium-gray);
+      }
+
+      input,
+      select {
+        width: 100%;
+        padding: 1rem 1rem 1rem 3rem;
+        border: 1px solid var(--light-gray);
+        border-radius: var(--border-radius);
+        font-size: 1rem;
+        transition: var(--transition);
+      }
+
+      input:focus,
+      select:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 2px rgba(42, 110, 187, 0.2);
+      }
+
+      /* Nurse-specific fields */
+      .nurse-fields {
+        display: none;
+      }
+
+      .nurse-fields.active {
+        display: block;
+        animation: fadeIn 0.5s ease;
+      }
+
+      .form-row {
+        display: flex;
+        gap: 1rem;
+      }
+
+      .form-row .input-group {
+        flex: 1;
+      }
+
+      .password-strength {
+        height: 5px;
+        background-color: var(--light-gray);
+        border-radius: 5px;
+        margin-top: 0.5rem;
+        overflow: hidden;
+      }
+
+      .password-strength-bar {
+        height: 100%;
+        width: 0%;
+        transition: width 0.3s ease;
+        border-radius: 5px;
+      }
+
+      .password-strength.weak .password-strength-bar {
+        background-color: #e74c3c;
+        width: 33%;
+      }
+
+      .password-strength.medium .password-strength-bar {
+        background-color: #f39c12;
+        width: 66%;
+      }
+
+      .password-strength.strong .password-strength-bar {
+        background-color: var(--secondary);
+        width: 100%;
+      }
+
+      .password-requirements {
+        font-size: 0.85rem;
+        color: var(--medium-gray);
+        margin-top: 0.5rem;
+      }
+
+      .requirement {
+        display: flex;
+        align-items: center;
+        margin-bottom: 0.25rem;
+      }
+
+      .requirement i {
+        margin-right: 0.5rem;
+        font-size: 0.75rem;
+      }
+
+      .requirement.valid {
+        color: var(--secondary);
+      }
+
+      .requirement.valid i {
+        color: var(--secondary);
+      }
+
+      .checkbox-group {
+        display: flex;
+        align-items: flex-start;
+        margin-bottom: 1.5rem;
+      }
+
+      .checkbox-group input {
+        width: auto;
+        margin-right: 0.75rem;
+        margin-top: 0.25rem;
+      }
+
+      .checkbox-group label {
+        font-weight: normal;
+        text-align: left;
+        line-height: 1.4;
+      }
+
+      .checkbox-group a {
+        color: var(--primary);
+        text-decoration: none;
+      }
+
+      .checkbox-group a:hover {
+        text-decoration: underline;
+      }
+
+      .btn {
+        width: 100%;
+        padding: 1rem;
+        background-color: var(--primary);
+        color: white;
+        border: none;
+        border-radius: var(--border-radius);
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: var(--transition);
+        margin-top: 0.5rem;
+      }
+
+      .btn:hover {
+        background-color: var(--primary-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .btn:disabled {
+        background-color: var(--medium-gray);
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+      }
+
+      .btn-nurse {
+        background-color: var(--secondary);
+      }
+
+      .btn-nurse:hover {
+        background-color: #2daa7a;
+      }
+
+      .signup {
+        margin-top: 2rem;
+        color: #555;
+      }
+
+      .signup a {
+        color: var(--primary);
+        text-decoration: none;
+        font-weight: 600;
+        transition: var(--transition);
+      }
+
+      .signup a:hover {
+        color: var(--primary-dark);
+        text-decoration: underline;
+      }
+
+      /* Divider */
+      .divider {
+        display: flex;
+        align-items: center;
+        margin: 2rem 0;
+      }
+
+      .divider::before,
+      .divider::after {
+        content: "";
+        flex: 1;
+        border-bottom: 1px solid var(--light-gray);
+      }
+
+      .divider span {
+        padding: 0 1rem;
+        color: var(--medium-gray);
+        font-size: 0.9rem;
+      }
+
+      /* Social Login */
+      .social-login {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 2rem;
+      }
+
+      .social-btn {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem;
+        border: 1px solid var(--light-gray);
+        border-radius: var(--border-radius);
+        background: white;
+        cursor: pointer;
+        transition: var(--transition);
+        font-weight: 500;
+      }
+
+      .social-btn:hover {
+        background-color: #f9f9f9;
+        transform: translateY(-2px);
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      }
+
+      .social-btn.google {
+        color: #db4437;
+      }
+
+      .social-btn.facebook {
+        color: #4267b2;
+      }
+
+      /* Footer */
+      footer {
+        background-color: var(--dark);
+        color: white;
+        padding: 2rem 1rem;
+        text-align: center;
+      }
+
+      .footer-content {
+        max-width: 800px;
+        margin: 0 auto 2rem;
+      }
+
+      .footer-links {
+        display: flex;
+        justify-content: center;
+        list-style: none;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+      }
+
+      .footer-links a {
+        color: #ddd;
+        text-decoration: none;
+        transition: color 0.3s;
+      }
+
+      .footer-links a:hover {
+        color: white;
+      }
+
+      .footer-bottom {
+        padding-top: 1rem;
+        border-top: 1px solid #555;
+      }
+
+      /* Animations */
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* Responsive Adjustments */
+      @media (max-width: 768px) {
+        .auth-box {
+          padding: 2rem 1.5rem;
+        }
+
+        .auth-box h1 {
+          font-size: 1.8rem;
+        }
+
+        .user-type-options {
+          flex-direction: column;
+        }
+
+        .benefits-list {
+          grid-template-columns: 1fr;
+        }
+
+        .form-row {
+          flex-direction: column;
+          gap: 0;
+        }
+
+        .social-login {
+          flex-direction: column;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .auth-box {
+          padding: 1.5rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Header -->
+    <header>
+      <div class="logo">CareConnect</div>
+    </header>
+
+    <!-- Auth Container -->
+    <div class="auth-container">
+      <div class="auth-box">
+        <h1>Create an Account</h1>
+        <p>Join CareConnect and start your healthcare journey</p>
+
+        <!-- User Type Selection -->
+        <div class="user-type-selection">
+          <h3>I am signing up as a:</h3>
+          <div class="user-type-options">
+            <div class="user-type-card patient selected" data-type="patient">
+              <i class="fas fa-user-injured"></i>
+              <h4>Patient</h4>
+              <p>Looking for healthcare services</p>
+            </div>
+            <div class="user-type-card nurse" data-type="nurse">
+              <i class="fas fa-user-nurse"></i>
+              <h4>Healthcare Professional</h4>
+              <p>Join as a nurse or doctor</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Nurse Benefits Section -->
+        <div class="nurse-benefits" id="nurseBenefits">
+          <h4>
+            <i class="fas fa-star"></i> Benefits for Healthcare Professionals
+          </h4>
+          <div class="benefits-list">
+            <div class="benefit-item">
+              <i class="fas fa-calendar-alt"></i>
+              <span>Flexible scheduling</span>
+            </div>
+            <div class="benefit-item">
+              <i class="fas fa-hand-holding-usd"></i>
+              <span>Competitive pay rates</span>
+            </div>
+            <div class="benefit-item">
+              <i class="fas fa-users"></i>
+              <span>Connect with patients</span>
+            </div>
+            <div class="benefit-item">
+              <i class="fas fa-shield-alt"></i>
+              <span>Malpractice insurance</span>
+            </div>
+            <div class="benefit-item">
+              <i class="fas fa-graduation-cap"></i>
+              <span>Continuing education</span>
+            </div>
+            <div class="benefit-item">
+              <i class="fas fa-chart-line"></i>
+              <span>Career growth opportunities</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Social Login Options -->
+        <div class="social-login">
+          <button class="social-btn google">
+            <i class="fab fa-google"></i>
+            <span>Google</span>
+          </button>
+          <button class="social-btn facebook">
+            <i class="fab fa-facebook-f"></i>
+            <span>Facebook</span>
+          </button>
+        </div>
+
+        <div class="divider">
+          <span>or sign up with email</span>
+        </div>
+
+        <!-- Signup Form -->
+        <form action="#" method="POST" id="signupForm">
+          <label for="fullName">Full Name</label>
+          <div class="input-group">
+            <i class="fas fa-user"></i>
+            <input
+              type="text"
+              id="fullName"
+              placeholder="Enter your full name"
+              required
+            />
+          </div>
+
+          <label for="email">Email Address</label>
+          <div class="input-group">
+            <i class="fas fa-envelope"></i>
+            <input
+              type="email"
+              id="email"
+              placeholder="Enter your email"
+              required
+            />
+          </div>
+
+          <!-- Nurse-specific fields -->
+          <div class="nurse-fields" id="nurseFields">
+            <div class="form-row">
+              <div class="input-group">
+                <label for="licenseNumber">License Number</label>
+                <i class="fas fa-id-card"></i>
+                <input
+                  type="text"
+                  id="licenseNumber"
+                  placeholder="e.g., RN123456"
+                />
+              </div>
+              <div class="input-group">
+                <label for="specialty">Specialty</label>
+                <i class="fas fa-stethoscope"></i>
+                <select id="specialty">
+                  <option value="">Select Specialty</option>
+                  <option value="critical-care">Critical Care</option>
+                  <option value="emergency">Emergency</option>
+                  <option value="pediatrics">Pediatrics</option>
+                  <option value="geriatrics">Geriatrics</option>
+                  <option value="oncology">Oncology</option>
+                  <option value="cardiac">Cardiac</option>
+                  <option value="surgical">Surgical</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+            </div>
+            <div class="input-group">
+              <label for="yearsExperience">Years of Experience</label>
+              <i class="fas fa-briefcase"></i>
+              <select id="yearsExperience">
+                <option value="">Select Experience</option>
+                <option value="0-2">0-2 years</option>
+                <option value="3-5">3-5 years</option>
+                <option value="6-10">6-10 years</option>
+                <option value="10+">10+ years</option>
+              </select>
+            </div>
+          </div>
+
+          <label for="password">Password</label>
+          <div class="input-group">
+            <i class="fas fa-lock"></i>
+            <input
+              type="password"
+              id="password"
+              placeholder="Create a password"
+              required
+            />
+          </div>
+
+          <div class="password-strength" id="passwordStrength">
+            <div class="password-strength-bar"></div>
+          </div>
+
+          <div class="password-requirements" id="passwordRequirements">
+            <div class="requirement" id="lengthReq">
+              <i class="fas fa-times"></i>
+              <span>At least 8 characters</span>
+            </div>
+            <div class="requirement" id="uppercaseReq">
+              <i class="fas fa-times"></i>
+              <span>At least one uppercase letter</span>
+            </div>
+            <div class="requirement" id="numberReq">
+              <i class="fas fa-times"></i>
+              <span>At least one number</span>
+            </div>
+            <div class="requirement" id="specialReq">
+              <i class="fas fa-times"></i>
+              <span>At least one special character</span>
+            </div>
+          </div>
+
+          <label for="confirmPassword">Confirm Password</label>
+          <div class="input-group">
+            <i class="fas fa-lock"></i>
+            <input
+              type="password"
+              id="confirmPassword"
+              placeholder="Confirm your password"
+              required
+            />
+          </div>
+
+          <div class="checkbox-group">
+            <input type="checkbox" id="terms" required />
+            <label for="terms">
+              I agree to the <a href="terms.html">Terms of Service</a> and
+              <a href="privacy.html">Privacy Policy</a>
+            </label>
+          </div>
+
+          <div class="checkbox-group">
+            <input type="checkbox" id="newsletter" />
+            <label for="newsletter">
+              Send me health tips, updates, and special offers
+            </label>
+          </div>
+
+          <button type="submit" class="btn" id="submitBtn" disabled>
+            Create Account
+          </button>
+        </form>
+
+        <p class="signup">
+          Already have an account? <a href="login.html">Login here</a>
+        </p>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+      <div class="container">
+        <div class="footer-content">
+          <h3>CareConnect</h3>
+          <p>
+            123 Healthcare Avenue, Medical District<br />
+            Phone: (090) 6347-5608 | CareConnect Support Team<br />
+            Monday - Friday, 9:00 AM - 6:00 PM
+          </p>
+        </div>
+        <ul class="footer-links">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="about.html">About Us</a></li>
+          <li><a href="help.html">Help Centre</a></li>
+          <li><a href="blog.html">Blog</a></li>
+          <li><a href="find-doctor.html">Find a Nurse</a></li>
+          <li><a href="login.html">Login</a></li>
+        </ul>
+        <div class="footer-bottom">
+          <p>&copy; 2025 CareConnect. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      // User type selection
+      const userTypeCards = document.querySelectorAll(".user-type-card");
+      const nurseBenefits = document.getElementById("nurseBenefits");
+      const nurseFields = document.getElementById("nurseFields");
+      const submitBtn = document.getElementById("submitBtn");
+
+      userTypeCards.forEach((card) => {
+        card.addEventListener("click", function () {
+          // Remove selected class from all cards
+          userTypeCards.forEach((c) => c.classList.remove("selected"));
+
+          // Add selected class to clicked card
+          this.classList.add("selected");
+
+          // Show/hide nurse benefits and fields
+          const isNurse = this.dataset.type === "nurse";
+          if (isNurse) {
+            nurseBenefits.classList.add("active");
+            nurseFields.classList.add("active");
+            submitBtn.textContent = "Join as Healthcare Professional";
+            submitBtn.classList.add("btn-nurse");
+          } else {
+            nurseBenefits.classList.remove("active");
+            nurseFields.classList.remove("active");
+            submitBtn.textContent = "Create Account";
+            submitBtn.classList.remove("btn-nurse");
+          }
+        });
+      });
+
+      // Password strength checker
+      const passwordInput = document.getElementById("password");
+      const passwordStrength = document.getElementById("passwordStrength");
+      const termsCheckbox = document.getElementById("terms");
+
+      // Password requirement elements
+      const lengthReq = document.getElementById("lengthReq");
+      const uppercaseReq = document.getElementById("uppercaseReq");
+      const numberReq = document.getElementById("numberReq");
+      const specialReq = document.getElementById("specialReq");
+
+      // Password validation function
+      function checkPasswordStrength(password) {
+        let strength = 0;
+        let requirements = {
+          length: false,
+          uppercase: false,
+          number: false,
+          special: false,
+        };
+
+        // Check length
+        if (password.length >= 8) {
+          strength += 1;
+          requirements.length = true;
+          lengthReq.classList.add("valid");
+          lengthReq.querySelector("i").className = "fas fa-check";
+        } else {
+          lengthReq.classList.remove("valid");
+          lengthReq.querySelector("i").className = "fas fa-times";
+        }
+
+        // Check uppercase
+        if (/[A-Z]/.test(password)) {
+          strength += 1;
+          requirements.uppercase = true;
+          uppercaseReq.classList.add("valid");
+          uppercaseReq.querySelector("i").className = "fas fa-check";
+        } else {
+          uppercaseReq.classList.remove("valid");
+          uppercaseReq.querySelector("i").className = "fas fa-times";
+        }
+
+        // Check numbers
+        if (/[0-9]/.test(password)) {
+          strength += 1;
+          requirements.number = true;
+          numberReq.classList.add("valid");
+          numberReq.querySelector("i").className = "fas fa-check";
+        } else {
+          numberReq.classList.remove("valid");
+          numberReq.querySelector("i").className = "fas fa-times";
+        }
+
+        // Check special characters
+        if (/[^A-Za-z0-9]/.test(password)) {
+          strength += 1;
+          requirements.special = true;
+          specialReq.classList.add("valid");
+          specialReq.querySelector("i").className = "fas fa-check";
+        } else {
+          specialReq.classList.remove("valid");
+          specialReq.querySelector("i").className = "fas fa-times";
+        }
+
+        // Update strength indicator
+        passwordStrength.className = "password-strength";
+        if (strength > 0) {
+          if (strength <= 2) {
+            passwordStrength.classList.add("weak");
+          } else if (strength === 3) {
+            passwordStrength.classList.add("medium");
+          } else {
+            passwordStrength.classList.add("strong");
+          }
+        }
+
+        return requirements;
+      }
+
+      // Form validation function
+      function validateForm() {
+        const password = passwordInput.value;
+        const confirmPassword =
+          document.getElementById("confirmPassword").value;
+        const requirements = checkPasswordStrength(password);
+        const allRequirementsMet = Object.values(requirements).every(
+          (req) => req
+        );
+        const passwordsMatch =
+          password === confirmPassword && password.length > 0;
+        const termsAccepted = termsCheckbox.checked;
+
+        // Enable/disable submit button
+        submitBtn.disabled = !(
+          allRequirementsMet &&
+          passwordsMatch &&
+          termsAccepted
+        );
+      }
+
+      // Event listeners
+      passwordInput.addEventListener("input", validateForm);
+      document
+        .getElementById("confirmPassword")
+        .addEventListener("input", validateForm);
+      termsCheckbox.addEventListener("change", validateForm);
+
+      // Form submission
+      document
+        .getElementById("signupForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+
+          const fullName = document.getElementById("fullName").value;
+          const email = document.getElementById("email").value;
+          const isNurse = document
+            .querySelector(".user-type-card.nurse")
+            .classList.contains("selected");
+
+          // Show appropriate success message
+          if (isNurse) {
+            const specialty = document.getElementById("specialty").value;
+            const experience = document.getElementById("yearsExperience").value;
+
+            alert(
+              `Welcome to CareConnect, ${fullName}!\n\nThank you for joining as a Healthcare Professional.\n\nWe'll review your application and contact you within 24-48 hours to complete the verification process.\n\nSpecialty: ${
+                specialty || "Not specified"
+              }\nExperience: ${
+                experience || "Not specified"
+              }\n\nIn a complete implementation, you would be redirected to complete your professional profile.`
+            );
+          } else {
+            alert(
+              `Account created successfully!\n\nWelcome to CareConnect, ${fullName}!\n\nEmail: ${email}\n\nIn a complete implementation, you would be redirected to verify your email.`
+            );
+          }
+
+          // Reset form
+          this.reset();
+          passwordStrength.className = "password-strength";
+          submitBtn.disabled = true;
+
+          // Reset requirement indicators
+          [lengthReq, uppercaseReq, numberReq, specialReq].forEach((req) => {
+            req.classList.remove("valid");
+            req.querySelector("i").className = "fas fa-times";
+          });
+        });
+
+      // Social login buttons
+      document.querySelectorAll(".social-btn").forEach((button) => {
+        button.addEventListener("click", function () {
+          const provider = this.classList.contains("google")
+            ? "Google"
+            : "Facebook";
+          alert(
+            `In a complete implementation, this would redirect to ${provider} authentication for signup.`
+          );
+        });
+      });
+    </script>
+  </body>
+</html>
